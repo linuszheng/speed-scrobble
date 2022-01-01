@@ -1,6 +1,9 @@
+
+
 export default class Player {
-    constructor(name){
-        this.name = name;
+
+    constructor(id){
+        this.socketId = id;
         this.words = [];
     }
 
