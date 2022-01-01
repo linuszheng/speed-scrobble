@@ -1,0 +1,10 @@
+server/yarn.lock
+server/package-lock.json
+server/node_modules/*
+
+client/my-app/yarn.lock
+client/my-app/package-lock.json
+client/my-app/node_modules/*
+
+*/.DS_Store
+.DS_Store
