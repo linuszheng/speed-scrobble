@@ -1,5 +1,6 @@
 import React from 'react';
 
+
 class Board extends React.Component {
     constructor(props){
         super(props);
@@ -11,7 +12,14 @@ class Board extends React.Component {
             left: tileInfo.x+'px'
         }
         return (
-            <div key={tileInfo.id} className="tile letter" style={style}>{tileInfo.content}</div>
+            <div 
+                key={tileInfo.id}
+                className="tile letter"
+                style={style} 
+                onClick={ ()=>{this.props.handleTileClick(tileInfo.id);} }
+            >
+                {tileInfo.hidden ? ' ' : tileInfo.content}
+            </div>
         );
     }
 
@@ -33,7 +41,7 @@ class Game extends React.Component {
     constructor(props){
         super(props);
         props.listeners.setBoardListener( (data)=>{this.handleBoard(data)} );
-        props.listeners.setAnnounceWordListener(( data)=>{this.handleAnnounceWord(data)} );
+        props.listeners.setAnnounceWordListener( (data)=>{this.handleAnnounceWord(data)} );
         this.state = {
             tiles: []
         }
@@ -50,13 +58,19 @@ class Game extends React.Component {
         console.log(data);
     }
 
+    handleTileClick(tileId){
+        this.props.emitters.emitFlip({
+            index: tileId
+        });
+    }
+
     render(){
         return (
             <div id="container">
                 <div id="titleBar">
                     <div id="idLabel">{this.props.id}</div>
                 </div>
-                <Board tiles={this.state.tiles}/>
+                <Board tiles={this.state.tiles} handleTileClick={ (tileId)=>{this.handleTileClick(tileId)} }/>
                 <div id="playerBoardContainer">
 
                 </div>
