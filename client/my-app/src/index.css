@@ -1,0 +1,14 @@
+
+
+div .tile {
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    background-color: beige;
+    text-align: center;
+    vertical-align: middle;
+}
+
+div .letter {
+    position: absolute;
+}
