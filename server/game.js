@@ -1,18 +1,22 @@
-import Player from './player.js';
-import Board from './board.js';
-import Dictionary from './dict.js';
+const playerModule = require('./player');
+const dictModule = require('./dict');
+const boardModule = require('./board');
 
 class Game {
     constructor(roomName){
         this.roomName = roomName;
-        const dict = new Dictionary();
-        const board = new Board();
-        let players = [];
+        const dict = new dictModule.Dictionary();
+        const board = new boardModule.Board();
+        this.players = [];
     }
 
     connect(socket){
-        players.push(new Player(socket.id));
+        this.players.push(new playerModule.Player(socket.id));
         socket.join(this.roomName);
         console.log('player ' + socket.id + ' connected');
     }
+}
+
+module.exports = {
+    Game: Game
 }

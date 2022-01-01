@@ -1,4 +1,4 @@
-export default class Dictionary {
+class Dictionary {
     constructor(){
 
     }
@@ -6,4 +6,8 @@ export default class Dictionary {
     isWord(w){
         return true;
     }
+}
+
+module.exports = {
+    Dictionary: Dictionary
 }

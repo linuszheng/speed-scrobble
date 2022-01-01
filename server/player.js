@@ -1,6 +1,4 @@
-
-
-export default class Player {
+class Player {
 
     constructor(id){
         this.socketId = id;
@@ -15,4 +13,8 @@ export default class Player {
         this.words.splice(this.words.indexOf(w), 1);
     }
     
+}
+
+module.exports = {
+    Player: Player
 }

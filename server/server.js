@@ -2,7 +2,9 @@ const express = require("express");
 const cors = require("cors");
 const http = require("http");
 const socketIO = require("socket.io");
-import Game from './game.js';
+const gameModule = require('./game');
+
+// ------------------------------------------------------------------------------------
 
 const PORT = 3030;
 
@@ -14,6 +16,8 @@ const MSG_USER_SAY_WORD = "user:say-word";
 const MSG_GAME_BOARD = "game:board";
 const MSG_GAME_ANNOUNCE_WORD = "game:announce-word";
 
+// ------------------------------------------------------------------------------------
+
 
 const app = express();
 const server = http.createServer(app);
@@ -24,10 +28,10 @@ const io = socketIO(server, {
 
 app.use(cors());
 
+const game = new gameModule.Game("fun-game-room");
 
 // ------------------------------------------------------------------------------------
 
-const game = new Game("fun-game-room");
 
 io.on("connection", (socket) => {
 
