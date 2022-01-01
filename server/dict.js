@@ -4,7 +4,7 @@ class Dictionary {
     }
 
     isWord(w){
-        return w.startsWith('v');
+        return true;
     }
 }
 

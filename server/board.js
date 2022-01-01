@@ -2,15 +2,15 @@ class Tile {
     constructor(id, content){
         this.id = id;
         this.content = content;
-        this.x = Math.random()*400;
-        this.y = Math.random()*400;
+        this.x = Math.random()*600;
+        this.y = Math.random()*600;
         this.hidden = true;
     }
 }
 
 class Board {
     constructor(){
-        const freq = {
+        this.freq = {
             'a': 13,
             'b': 3,
             'c': 3,
@@ -39,6 +39,7 @@ class Board {
             'z': 2
         }
         this.tiles = [];
+        this.curShownLetters = [];
 
         let id=0;
         for(const [letter, n] of Object.entries(freq)){
@@ -53,7 +54,18 @@ class Board {
 
     flipTile(i) {
         this.tiles[i].hidden = false;
-        this.curTileIndex++;
+        this.curShownLetters.push(this.tiles[i].content);
+    }
+
+    
+
+    removeTile(letter){
+        for(const tile of tiles){
+            if(tile.content === letter && !tile.hidden){
+                this.tiles.splice(i, 1);
+                break;
+            }
+        }
     }
     
 }
