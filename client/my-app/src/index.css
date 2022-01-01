@@ -13,10 +13,60 @@ div .letter {
     position: absolute;
 }
 
+body {
+    margin: 0px;
+}
+
+div #container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+div #allBoardContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+div #letterBoard {
+    height: 600px;
+    width: 600px;
+    background-color: grey;
+    position: relative;
+}
+
+div #playerBoardContainer {
+    height: 600px;
+    width: 300px;
+}
+
+div .playerBoard {
+    background-color: gold;
+    border: solid sandybrown;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px 10px;
+}
+
+div .wordComponent {
+    display: flex;
+    flex-direction: row;
+}
+
+div .playerBoardLabel {
+    width: 100%;
+}
+
 #wordInput {
     font-size: 16px;
 }
 
-#wordSubmit {
+#wordSubmitButton {
     background-color: burlywood;
+}
+
+#restartButton {
+    background-color: tomato;
 }
