@@ -10,6 +10,7 @@ const PORT = 3030;
 
 const MSG_USER_FLIP = "user:flip";
 const MSG_USER_SAY_WORD = "user:say-word";
+const MSG_USER_RESTART = "user:restart";
 
 
 const MSG_GAME_BOARD = "game:board";
@@ -51,6 +52,10 @@ io.on("connection", (socket) => {
 
   socket.on(MSG_USER_SAY_WORD, (data) => {
     game.handleSayWord(socket, data);
+  });
+
+  socket.on(MSG_USER_RESTART, (data) => {
+    game.handleRestart(socket, data);
   });
 
   socket.on("disconnect", ()=>{

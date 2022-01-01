@@ -40,22 +40,19 @@ class Board {
         }
         this.tiles = [];
 
+        let id=0;
         for(const [letter, n] of Object.entries(freq)){
             for(let i=0; i<n; i++){
-                this.tiles.push(new Tile(i, letter));
+                this.tiles.push(new Tile(id, letter));
+                id++;
             }
         }
-        this.tiles = this.tiles
-            .map((val) => ({val, sortIndex: Math.random()}))
-            .sort((a, b) => a.sortIndex-b.sortIndex)
-            .map(({val}) => val);
-        this.curTileIndex = 0;
 
         console.log(this.tiles);
     }
 
-    flipTile() {
-        this.tiles[this.curTileIndex].hidden = false;
+    flipTile(i) {
+        this.tiles[i].hidden = false;
         this.curTileIndex++;
     }
     
