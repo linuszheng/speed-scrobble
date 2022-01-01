@@ -12,3 +12,11 @@ div .tile {
 div .letter {
     position: absolute;
 }
+
+#wordInput {
+    font-size: 16px;
+}
+
+#wordSubmit {
+    background-color: burlywood;
+}

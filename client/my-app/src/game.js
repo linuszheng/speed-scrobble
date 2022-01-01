@@ -16,8 +16,7 @@ class Board extends React.Component {
                 key={tileInfo.id}
                 className="tile letter"
                 style={style} 
-                onClick={ ()=>{this.props.handleTileClick(tileInfo.id);} }
-            >
+                onClick={ ()=>{this.props.handleTileClick(tileInfo.id);} }>
                 {tileInfo.hidden ? ' ' : tileInfo.content}
             </div>
         );
@@ -36,6 +35,42 @@ class Board extends React.Component {
     }
 }
 
+class WordInput extends React.Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            text: ''
+        }
+    }
+
+    handleKeyPress(e){
+        if(!e) e = window.event;
+        if(e.key == 'Enter'){
+            this.handleSubmit();
+        }
+    }
+
+    handleSubmit(){
+        this.props.handleWordInputSubmit(this.state.text);
+        this.setState({text: ''});
+    }
+
+    handleInputChange(e){
+        this.setState({text: e.target.value});
+    }
+
+    render(){
+        return (<div>
+            <input type="text" id="wordInput"
+                value={this.state.text}
+                onKeyPress={ e => {this.handleKeyPress(e)} }
+                onChange={ e => {this.handleInputChange(e)} }>
+            </input>
+            <button id="wordSubmit" onClick={ e => {this.handleSubmit()} }>Submit</button>
+        </div>);
+    }
+}
+
 class Game extends React.Component {
 
     constructor(props){
@@ -48,19 +83,23 @@ class Game extends React.Component {
     }
 
     handleBoard(data){
-        console.log(data);
         this.setState({
             tiles: data.board.tiles
         });
     }
 
     handleAnnounceWord(data){
-        console.log(data);
     }
 
     handleTileClick(tileId){
         this.props.emitters.emitFlip({
             index: tileId
+        });
+    }
+
+    handleWordInputSubmit(word){
+        this.props.emitters.emitSayWord({
+            word: word
         });
     }
 
@@ -74,6 +113,7 @@ class Game extends React.Component {
                 <div id="playerBoardContainer">
 
                 </div>
+                <WordInput handleWordInputSubmit={ (word)=>{this.handleWordInputSubmit(word)} } />
             </div>
         );
     }
