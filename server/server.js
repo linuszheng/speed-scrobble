@@ -8,7 +8,6 @@ const gameModule = require('./game');
 
 const PORT = 3030;
 
-const MSG_USER_JOIN = "user:join";
 const MSG_USER_FLIP = "user:flip";
 const MSG_USER_SAY_WORD = "user:say-word";
 
@@ -28,22 +27,35 @@ const io = socketIO(server, {
 
 app.use(cors());
 
-const game = new gameModule.Game("fun-game-room");
+const emitters = {
+  emitBoard: (room, data) => {
+    io.in(room).emit(MSG_GAME_BOARD, data);
+  },
+  emitAnnounceWord: (room, data) => {
+    io.in(room).emit(MSG_GAME_ANNOUNCE_WORD, data);
+  }
+}
+
+const game = new gameModule.Game("fun-game-room", emitters);
 
 // ------------------------------------------------------------------------------------
 
 
 io.on("connection", (socket) => {
 
-  game.connect(socket);
+  game.handleConnect(socket);
 
-  // socket.on(NEW_MESSAGE_EVENT, (data) => {
-  //   io.in(room).emit(NEW_MESSAGE_EVENT, data);
-  // });
+  socket.on(MSG_USER_FLIP, (data) => {
+    game.handleFlip(socket, data);
+  });
 
-  // socket.on("disconnect", () => {
-  //   socket.leave(room);
-  // });
+  socket.on(MSG_USER_SAY_WORD, (data) => {
+    game.handleSayWord(socket, data);
+  });
+
+  socket.on("disconnect", ()=>{
+    game.handleDisconnect(socket);
+  });
 });
 
 server.listen(PORT, () => {

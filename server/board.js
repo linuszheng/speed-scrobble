@@ -1,8 +1,10 @@
 class Tile {
-    constructor(val){
-        this.val = val;
+    constructor(id, content){
+        this.id = id;
+        this.content = content;
         this.x = Math.random()*400;
         this.y = Math.random()*400;
+        this.hidden = true;
     }
 }
 
@@ -38,17 +40,23 @@ class Board {
         }
         this.tiles = [];
 
-        for(const [key, val] of Object.entries(freq)){
-            for(let i=0; i<val; i++){
-                this.tiles.push(new Tile(key));
+        for(const [letter, n] of Object.entries(freq)){
+            for(let i=0; i<n; i++){
+                this.tiles.push(new Tile(i, letter));
             }
         }
         this.tiles = this.tiles
             .map((val) => ({val, sortIndex: Math.random()}))
             .sort((a, b) => a.sortIndex-b.sortIndex)
             .map(({val}) => val);
+        this.curTileIndex = 0;
 
         console.log(this.tiles);
+    }
+
+    flipTile() {
+        this.tiles[this.curTileIndex].hidden = false;
+        this.curTileIndex++;
     }
     
 }
