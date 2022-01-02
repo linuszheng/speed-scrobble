@@ -35,6 +35,16 @@ class Game {
         this.emitBoard();
     }
 
+    handleRestart(socket, data){
+        this.board = new boardModule.Board();
+        let newPlayers = {};
+        for(const id in this.players){
+            newPlayers[id] = new playerModule.Player(id);
+        }
+        this.players = newPlayers;
+        this.emitBoard();
+    }
+
     handleSayWord(socket, data){
         const word = data.word;
 
@@ -51,29 +61,9 @@ class Game {
         });
     }
 
-    handleRestart(socket, data){
-        this.board = new boardModule.Board();
-        let newPlayers = {};
-        for(const id in this.players){
-            newPlayers[id] = new playerModule.Player(id);
-        }
-        this.players = newPlayers;
-        this.emitBoard();
-    }
-
-    worksWithPlayerWord(x, w){
-        let dif = this.difIfSupersetElseFalse(Array.from(x), Array.from(w));
-        if(dif === false) return false;
-        dif = this.difIfSupersetElseFalse(board.curShownLetters, dif);
-        if(dif === false) return false;
-        for(const letter of dif){
-            this.board.removeTile(letter);
-        }
-        return true;
-    }
-
     removeAndReturnTrueIfExists(x){
-        for(const player of this.players){
+        if(this.worksWithBoard(x)) return true;
+        for(const [id, player] of Object.entries(this.players)){
             for(const i in player.words){
                 const w = player.words[i];
                 if(this.worksWithPlayerWord(x, w)){
@@ -85,8 +75,43 @@ class Game {
         return false;
     }
 
-    difIfSupersetElseFalse(){
+    worksWithPlayerWord(x, w){
+        console.log(w);
+        const dif1 = this.difIfSupersetElseFalse(Array.from(x), Array.from(w));
+        if(dif1 === false || dif1.length == 0) return false;
+        const dif2 = this.difIfSupersetElseFalse(this.board.curShownLetters, dif1);
+        if(dif2 === false) return false;
+        for(const letter of dif1){
+            this.board.removeTile(letter);
+        }
+        return true;
+    }
 
+    worksWithBoard(x){
+        let dif = this.difIfSupersetElseFalse(this.board.curShownLetters, Array.from(x));
+        if(dif === false) return false;
+        for(const letter of Array.from(x)){
+            this.board.removeTile(letter);
+        }
+        return true;
+    }
+
+    difIfSupersetElseFalse(a, b){
+        a.sort();
+        b.sort();
+        let ai = 0;
+        let bi = 0;
+        let dif = [];
+        while(ai < a.length){
+            if(a[ai] == b[bi]) {
+                bi++;
+            } else {
+                dif.push(a[ai]);
+            }
+            ai++;
+        }
+        if(bi == b.length) return dif;
+        else return false;
     }
 
 

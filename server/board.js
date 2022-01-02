@@ -10,7 +10,7 @@ class Tile {
 
 class Board {
     constructor(){
-        this.freq = {
+        const freq = {
             'a': 13,
             'b': 3,
             'c': 3,
@@ -38,31 +38,40 @@ class Board {
             'y': 3,
             'z': 2
         }
-        this.tiles = [];
+        this.tilesAll = [];
+        this.tilesRemaining = [];
         this.curShownLetters = [];
 
         let id=0;
         for(const [letter, n] of Object.entries(freq)){
             for(let i=0; i<n; i++){
-                this.tiles.push(new Tile(id, letter));
+                const tile = new Tile(id, letter);
+                this.tilesAll.push(tile);
+                this.tilesRemaining.push(tile);
                 id++;
             }
         }
 
-        console.log(this.tiles);
+        console.log(this.tilesAll);
     }
 
     flipTile(i) {
-        this.tiles[i].hidden = false;
-        this.curShownLetters.push(this.tiles[i].content);
+        this.tilesAll[i].hidden = false;
+        this.curShownLetters.push(this.tilesAll[i].content);
     }
 
-    
 
     removeTile(letter){
-        for(const tile of tiles){
-            if(tile.content === letter && !tile.hidden){
-                this.tiles.splice(i, 1);
+        for(const i in this.tilesRemaining){
+            const tile = this.tilesRemaining[i];
+            if(tile.content == letter && !tile.hidden){
+                this.tilesRemaining.splice(i, 1);
+                break;
+            }
+        }
+        for(const i in this.curShownLetters){
+            if(this.curShownLetters[i] == letter){
+                this.curShownLetters.splice(i, 1);
                 break;
             }
         }
