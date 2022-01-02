@@ -24,8 +24,8 @@ class Board extends React.Component {
 
     render(){
         let tileComponents = [];
-        for(const i in this.props.tiles){
-            tileComponents.push(this.renderTile(this.props.tiles[i]));
+        for(const tileInfo of this.props.tiles){
+            tileComponents.push(this.renderTile(tileInfo));
         }
         return (
             <div id="letterBoard">
@@ -84,7 +84,7 @@ class Game extends React.Component {
 
     handleBoard(data){
         this.setState({
-            tiles: data.board.tiles,
+            tiles: data.board.tilesRemaining,
             players: data.players
         });
     }
@@ -131,7 +131,7 @@ class Game extends React.Component {
             playerBoardComponents.push(this.renderPlayerBoard(this.state.players[i]));
         }
         return (
-            <div id="container">
+            <div id="container" onClick={ () => { document.getElementById('wordInput').focus(); } }>
                 <div id="titleBar">
                     <div id="idLabel">{this.props.id}</div>
                 </div>
