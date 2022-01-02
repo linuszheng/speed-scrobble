@@ -2,8 +2,8 @@ class Tile {
     constructor(id, content){
         this.id = id;
         this.content = content;
-        this.x = Math.random()*600;
-        this.y = Math.random()*600;
+        this.x = Math.random()*570;
+        this.y = Math.random()*570;
         this.hidden = true;
     }
 }

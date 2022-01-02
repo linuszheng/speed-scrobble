@@ -2,6 +2,25 @@ const playerModule = require('./player');
 const dictModule = require('./dict');
 const boardModule = require('./board');
 
+class TurnCounter {
+    constructor(){
+        this.curTurn = 0;
+        this.playerIds = [];
+    }
+
+    addPlayerId(id){
+        this.playerIds.push(id);
+    }
+
+    increment(){
+        this.curTurn++;
+        if(this.curTurn == this.playerIds.length) this.curTurn = 0;
+    }
+
+    getCurPlayerId(){
+        return this.playerIds[this.curTurn];
+    }
+}
 
 class Game {
     constructor(roomName, emitters){
@@ -9,18 +28,21 @@ class Game {
         this.emitters = emitters;
         this.dict = new dictModule.Dictionary();
         this.board = new boardModule.Board();
+        this.turnCounter = new TurnCounter();
         this.players = {};
     }
 
     emitBoard(){
         this.emitters.emitBoard(this.roomName, {
             board: this.board,
-            players: this.players
+            players: this.players,
+            playerTurn: this.turnCounter.getCurPlayerId()
         });
     }
 
     handleConnect(socket){
         this.players[socket.id] = new playerModule.Player(socket.id);
+        this.turnCounter.addPlayerId(socket.id);
         socket.join(this.roomName);
         this.emitBoard();
     }
@@ -31,8 +53,11 @@ class Game {
 
     handleFlip(socket, data){
         const index = data.index;
-        this.board.flipTile(index);                  // TODO: handle if tile already flipped, index is valid, make sure it is that user's turn
-        this.emitBoard();
+        if(socket.id == this.turnCounter.getCurPlayerId() && this.board.tilesAll[index].hidden) {
+            this.board.flipTile(index);
+            this.turnCounter.increment();
+            this.emitBoard();
+        }
     }
 
     handleRestart(socket, data){
