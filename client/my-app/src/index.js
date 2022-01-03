@@ -17,7 +17,6 @@ const MSG_USER_RESTART = "user:restart";
 
 const MSG_GAME_BOARD = "game:board";
 const MSG_GAME_ANNOUNCE_WORD = "game:announce-word";
-const MSG_GAME_NEW_PLAYER = "game:new-player";
 
 // ------------------------------------------------------------------------------------
 
@@ -64,13 +63,6 @@ const listeners = {
       console.log('received announce word');
       console.log(data);
       handleAnnounceWord(data);
-    });
-  },
-  setNewPlayerListener: (handleNewPlayer) => {
-    socketRef.on(MSG_GAME_NEW_PLAYER, (data) => {
-      console.log('received new player');
-      console.log(data);
-      handleNewPlayer(data);
     });
   }
 }

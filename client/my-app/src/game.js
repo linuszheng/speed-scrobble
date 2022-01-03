@@ -2,9 +2,6 @@ import React from 'react';
 
 
 class Board extends React.Component {
-    constructor(props){
-        super(props);
-    }
 
     renderTile(tileInfo){
         const style = {
@@ -45,7 +42,7 @@ class WordInput extends React.Component {
 
     handleKeyPress(e){
         if(!e) e = window.event;
-        if(e.key == 'Enter'){
+        if(e.key === 'Enter'){
             this.handleSubmit();
         }
     }
@@ -72,9 +69,6 @@ class WordInput extends React.Component {
 }
 
 class PlayerBoard extends React.Component {
-    constructor(props){
-        super(props);
-    }
 
     renderWordComponent(word, index){
         const letterComponents = [];
@@ -84,15 +78,18 @@ class PlayerBoard extends React.Component {
         return (<div key={index} className="wordComponent">{letterComponents}</div>);
     }
 
-
     render(){
         const player = this.props.player;
         const wordComponents = [];
         for(const i in player.words){
             wordComponents.push(this.renderWordComponent(player.words[i], i));
         }
+        let className = 'playerBoard';
+        if (this.props.turnStatus) className += ' curTurn';
+        if (player.wordStatus === 'valid') className += ' gaveValidWord';
+        else if (player.wordStatus === 'invalid') className += ' gaveInvalidWord';
         return (
-            <div className='playerBoard'>
+            <div className={className}>
                 <div className="playerBoardLabel">{player.socketId}</div>
                 {wordComponents}
             </div>
@@ -116,7 +113,8 @@ class Game extends React.Component {
     handleBoard(data){
         this.setState({
             tiles: data.board.tilesRemaining,
-            players: data.players
+            players: data.players,
+            playerTurn: data.playerTurn
         });
     }
 
@@ -146,7 +144,8 @@ class Game extends React.Component {
         const playerBoardComponents = [];
         for(const i in this.state.players){
             const player = this.state.players[i];
-            playerBoardComponents.push(<PlayerBoard key={player.socketId} player={player} />);
+            const turnStatus = (player.socketId === this.state.playerTurn);
+            playerBoardComponents.push(<PlayerBoard key={player.socketId} player={player} turnStatus={turnStatus}/>);
         }
         return (
             <div id="container" onClick={ () => { document.getElementById('wordInput').focus(); } }>

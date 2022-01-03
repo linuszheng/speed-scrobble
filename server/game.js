@@ -21,9 +21,10 @@ class TurnCounter {
         if(this.curTurn == this.playerIds.length) this.curTurn = 0;
     }
 
-    setTurnToPlayerId(id){
+    setPlayerId(id){
         for(const i in this.playerIds){
-            if(this.playerIds[i] == id) this.curTurn = i;
+            const isTurn = (this.playerIds[i] == id);
+            if (isTurn) this.curTurn = i;
         }
     }
 
@@ -43,15 +44,25 @@ class Game {
     }
 
     emitBoard(){
+        const playersInfo = {};
+        for(const key in this.players){
+            const player = this.players[key];
+            playersInfo[key] = {
+                socketId: player.socketId,
+                words: player.words,
+                wordStatus: player.wordStatus,
+                turnStatus: player.turnStatus
+            }
+        }
         this.emitters.emitBoard(this.roomName, {
             board: this.board,
-            players: this.players,
+            players: playersInfo,
             playerTurn: this.turnCounter.getCurPlayerId()
         });
     }
 
     handleConnect(socket){
-        this.players[socket.id] = new playerModule.Player(socket.id);
+        this.players[socket.id] = new playerModule.Player(socket.id, ()=>{this.emitBoard()});
         this.turnCounter.addPlayerId(socket.id);
         socket.join(this.roomName);
         this.emitBoard();
@@ -83,13 +94,14 @@ class Game {
 
     handleSayWord(socket, data){
         const word = data.word;
-
+        const player = this.players[socket.id];
         const valid = (this.dict.isWord(word) && this.removeAndReturnTrueIfExists(word));
         if(valid) {
-            this.players[socket.id].addWord(word);
-            this.turnCounter.setTurnToPlayerId(socket.id);
-            this.emitBoard();
+            player.addWord(word);
+            this.turnCounter.setPlayerId(socket.id);
         }
+        player.setWordStatus(valid);
+        this.emitBoard();
 
         this.emitters.emitAnnounceWord(this.roomName, {
             socketId: socket.id,

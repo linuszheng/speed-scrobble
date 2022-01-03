@@ -50,7 +50,8 @@ div #playerBoardContainer {
 /* ---------------------------------------------------------------------------------------- */
 
 
-div .playerBoard {
+.playerBoard {
+    background-color: gold;
     border: solid sandybrown;
     display: flex;
     flex-direction: row;
@@ -87,20 +88,16 @@ div .wordComponent {
 
 /* ---------------------------------------------------------------------------------------- */
 
+.curTurn {
+    background-color: violet;
+}
+
 .gaveValidWord {
     background-color: yellowgreen;
 }
 
 .gaveInvalidWord {
     background-color: tomato;
-}
-
-.normalPlayerContainer {
-    background-color: gold;
-}
-
-.curTurn {
-    background-color: violet;
 }
 
 /* ---------------------------------------------------------------------------------------- */
