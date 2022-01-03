@@ -1,3 +1,9 @@
+const https = require('https');
+
+const options = {
+    hostname: ''
+};
+
 class Dictionary {
     constructor(){
 

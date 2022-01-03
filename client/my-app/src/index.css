@@ -12,6 +12,20 @@ div .tile {
 
 div .letter {
     position: absolute;
+    border: 2px solid burlywood;    /* in sync with .wordComponent border */
+}
+
+/* ---------------------------------------------------------------------------------------- */
+
+
+#titleBar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#idLabel {
+    font-size: 20px;
 }
 
 /* ---------------------------------------------------------------------------------------- */
@@ -42,7 +56,11 @@ div #letterBoard {
 
 div #playerBoardContainer {
     height: 600px;
-    width: 400px;
+    width: 600px;
+    border-color: sandybrown;
+    border-style: solid;
+    border-width: 2px;                      /* top right left bottom, in sync with .playerBoard border-width */
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
 }
@@ -52,14 +70,17 @@ div #playerBoardContainer {
 
 .playerBoard {
     background-color: gold;
-    border: solid sandybrown;
+    border-color: sandybrown;
+    border-style: solid;
+    border-width: 2px;                      /* top right left bottom, in sync with #playerBoardContainer border-width */
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     align-content: flex-start;
-    gap: 10px 10px;
     flex-grow: 1;
+    padding: 5px;                           /* in sync with .wordComponent margin */
 }
+
 
 div .playerBoardLabel {
     width: 100%;
@@ -68,6 +89,8 @@ div .playerBoardLabel {
 div .wordComponent {
     display: flex;
     flex-direction: row;
+    margin: 5px;                           /* in sync with .playerBoard padding */
+    border: 2px solid burlywood;        /* in sync with .letter border */
 }
 
 /* ---------------------------------------------------------------------------------------- */
@@ -89,7 +112,7 @@ div .wordComponent {
 /* ---------------------------------------------------------------------------------------- */
 
 .curTurn {
-    background-color: violet;
+    font-weight: bold;
 }
 
 .gaveValidWord {
@@ -98,6 +121,10 @@ div .wordComponent {
 
 .gaveInvalidWord {
     background-color: tomato;
+}
+
+.myBoard {
+    background-color: violet;
 }
 
 /* ---------------------------------------------------------------------------------------- */

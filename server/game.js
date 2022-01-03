@@ -95,7 +95,7 @@ class Game {
     handleSayWord(socket, data){
         const word = data.word;
         const player = this.players[socket.id];
-        const valid = (this.dict.isWord(word) && this.removeAndReturnTrueIfExists(word));
+        const valid = (word.length >= 3 && this.dict.isWord(word) && this.removeAndReturnTrueIfExists(word));
         if(valid) {
             player.addWord(word);
             this.turnCounter.setPlayerId(socket.id);

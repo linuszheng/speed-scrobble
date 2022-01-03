@@ -85,12 +85,14 @@ class PlayerBoard extends React.Component {
             wordComponents.push(this.renderWordComponent(player.words[i], i));
         }
         let className = 'playerBoard';
-        if (this.props.turnStatus) className += ' curTurn';
+        let text = player.socketId;
+        if (this.props.meStatus) {className += ' myBoard'; text += ' (YOU)'}
+        if (this.props.turnStatus) {className += ' curTurn'; text += ' <------------------'}
         if (player.wordStatus === 'valid') className += ' gaveValidWord';
         else if (player.wordStatus === 'invalid') className += ' gaveInvalidWord';
         return (
             <div className={className}>
-                <div className="playerBoardLabel">{player.socketId}</div>
+                <div className="playerBoardLabel">{text}</div>
                 {wordComponents}
             </div>
         );
@@ -145,7 +147,8 @@ class Game extends React.Component {
         for(const i in this.state.players){
             const player = this.state.players[i];
             const turnStatus = (player.socketId === this.state.playerTurn);
-            playerBoardComponents.push(<PlayerBoard key={player.socketId} player={player} turnStatus={turnStatus}/>);
+            const meStatus = (player.socketId === this.props.id);
+            playerBoardComponents.push(<PlayerBoard key={player.socketId} player={player} turnStatus={turnStatus} meStatus={meStatus}/>);
         }
         return (
             <div id="container" onClick={ () => { document.getElementById('wordInput').focus(); } }>

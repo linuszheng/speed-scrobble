@@ -1,45 +1,56 @@
 const express = require("express");
 const cors = require("cors");
 const http = require("http");
+const path = require('path');
 const socketIO = require("socket.io");
 const gameModule = require('./game');
 
 // ------------------------------------------------------------------------------------
 
-const PORT = 3030;
+const BACKEND_SERVER_PORT = 3030;
+const SITE_SERVER_PORT = 9000;
+const PATH_TO_SITE = '/Users/linuszheng/Desktop/Code/projects/speed-scrobble/client/my-app';
+
+// ------------------------------------------------------------------------------------
+
 
 const MSG_USER_FLIP = "user:flip";
 const MSG_USER_SAY_WORD = "user:say-word";
 const MSG_USER_RESTART = "user:restart";
 
-
 const MSG_GAME_BOARD = "game:board";
 const MSG_GAME_ANNOUNCE_WORD = "game:announce-word";
 
+
 // ------------------------------------------------------------------------------------
 
+const siteApp = express();
+siteApp.use(cors());
+siteApp.use(express.static(path.join(PATH_TO_SITE, 'build')));
 
-const app = express();
-const server = http.createServer(app);
-const io = socketIO(server, {
-  cors: true,
-  origins:["localhost:3000"]
+siteApp.get('/', (req, res) => {
+  res.sendFile(path.join(PATH_TO_SITE, 'build', 'index.html'));
 });
 
-app.use(cors());
+const siteServer = http.createServer(siteApp);
+siteServer.listen(SITE_SERVER_PORT, () => {
+  console.log(`web server listening on *:${SITE_SERVER_PORT}`)
+});
 
-const emitters = {
-  emitBoard: (room, data) => {
-    console.log('emitting board');
-    io.in(room).emit(MSG_GAME_BOARD, data);
-  },
-  emitAnnounceWord: (room, data) => {
-    console.log('emitting word');
-    io.in(room).emit(MSG_GAME_ANNOUNCE_WORD, data);
-  },
-}
+// ------------------------------------------------------------------------------------
 
-const game = new gameModule.Game("fun-game-room", emitters);
+const backendApp = express();
+
+const backendServer = http.createServer(backendApp);
+backendServer.listen(BACKEND_SERVER_PORT, () => {
+  console.log(`backend server listening on *:${BACKEND_SERVER_PORT}`);
+});
+
+// ------------------------------------------------------------------------------------
+
+const io = socketIO(backendServer, {
+  cors: true
+});
 
 // ------------------------------------------------------------------------------------
 
@@ -70,6 +81,20 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(PORT, () => {
-  console.log(`listening on *:${PORT}`);
-});
+// ------------------------------------------------------------------------------------
+
+
+const emitters = {
+  emitBoard: (room, data) => {
+    console.log('emitting board');
+    io.in(room).emit(MSG_GAME_BOARD, data);
+  },
+  emitAnnounceWord: (room, data) => {
+    console.log('emitting word');
+    io.in(room).emit(MSG_GAME_ANNOUNCE_WORD, data);
+  },
+}
+
+const game = new gameModule.Game("fun-game-room", emitters);
+
+// ------------------------------------------------------------------------------------
