@@ -8,6 +8,10 @@ class TurnCounter {
         this.playerIds = [];
     }
 
+    reset(){
+        this.curTurn = 0;
+    }
+
     addPlayerId(id){
         this.playerIds.push(id);
     }
@@ -15,6 +19,12 @@ class TurnCounter {
     increment(){
         this.curTurn++;
         if(this.curTurn == this.playerIds.length) this.curTurn = 0;
+    }
+
+    setTurnToPlayerId(id){
+        for(const i in this.playerIds){
+            if(this.playerIds[i] == id) this.curTurn = i;
+        }
     }
 
     getCurPlayerId(){
@@ -67,6 +77,7 @@ class Game {
             newPlayers[id] = new playerModule.Player(id);
         }
         this.players = newPlayers;
+        this.turnCounter.reset();
         this.emitBoard();
     }
 
@@ -76,6 +87,7 @@ class Game {
         const valid = (this.dict.isWord(word) && this.removeAndReturnTrueIfExists(word));
         if(valid) {
             this.players[socket.id].addWord(word);
+            this.turnCounter.setTurnToPlayerId(socket.id);
             this.emitBoard();
         }
 

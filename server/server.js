@@ -36,7 +36,7 @@ const emitters = {
   emitAnnounceWord: (room, data) => {
     console.log('emitting word');
     io.in(room).emit(MSG_GAME_ANNOUNCE_WORD, data);
-  }
+  },
 }
 
 const game = new gameModule.Game("fun-game-room", emitters);
