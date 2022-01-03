@@ -1,3 +1,4 @@
+/* ---------------------------------------------------------------------------------------- */
 
 
 div .tile {
@@ -12,6 +13,9 @@ div .tile {
 div .letter {
     position: absolute;
 }
+
+/* ---------------------------------------------------------------------------------------- */
+
 
 body {
     margin: 0px;
@@ -38,16 +42,26 @@ div #letterBoard {
 
 div #playerBoardContainer {
     height: 600px;
-    width: 300px;
+    width: 400px;
+    display: flex;
+    flex-direction: column;
 }
 
+/* ---------------------------------------------------------------------------------------- */
+
+
 div .playerBoard {
-    background-color: gold;
     border: solid sandybrown;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    align-content: flex-start;
     gap: 10px 10px;
+    flex-grow: 1;
+}
+
+div .playerBoardLabel {
+    width: 100%;
 }
 
 div .wordComponent {
@@ -55,9 +69,8 @@ div .wordComponent {
     flex-direction: row;
 }
 
-div .playerBoardLabel {
-    width: 100%;
-}
+/* ---------------------------------------------------------------------------------------- */
+
 
 #wordInput {
     font-size: 16px;
@@ -70,3 +83,24 @@ div .playerBoardLabel {
 #restartButton {
     background-color: tomato;
 }
+
+
+/* ---------------------------------------------------------------------------------------- */
+
+.gaveValidWord {
+    background-color: yellowgreen;
+}
+
+.gaveInvalidWord {
+    background-color: tomato;
+}
+
+.normalPlayerContainer {
+    background-color: gold;
+}
+
+.curTurn {
+    background-color: violet;
+}
+
+/* ---------------------------------------------------------------------------------------- */
