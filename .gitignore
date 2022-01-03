@@ -1,6 +1,7 @@
 server/yarn.lock
 server/package-lock.json
 server/node_modules/*
+server/run.sh
 
 client/my-app/yarn.lock
 client/my-app/package-lock.json

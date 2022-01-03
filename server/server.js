@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const http = require("http");
+const https = require('https');
 const path = require('path');
 const socketIO = require("socket.io");
 const gameModule = require('./game');
@@ -9,6 +10,7 @@ const gameModule = require('./game');
 
 const BACKEND_SERVER_PORT = 3030;
 const SITE_SERVER_PORT = 9000;
+const SINGLE_SERVER_PORT = 3030;
 const PATH_TO_SITE = '/Users/linuszheng/Desktop/Code/projects/speed-scrobble/client/my-app';
 
 // ------------------------------------------------------------------------------------
@@ -23,34 +25,70 @@ const MSG_GAME_ANNOUNCE_WORD = "game:announce-word";
 
 
 // ------------------------------------------------------------------------------------
+// // Serving on two different ports
 
-const siteApp = express();
-siteApp.use(cors());
-siteApp.use(express.static(path.join(PATH_TO_SITE, 'build')));
+// const siteApp = express();
+// siteApp.use(cors());
+// siteApp.use(express.static(path.join(PATH_TO_SITE, 'build')));
 
-siteApp.get('/', (req, res) => {
-  res.sendFile(path.join(PATH_TO_SITE, 'build', 'index.html'));
-});
+// siteApp.get('/', (req, res) => {
+//   res.sendFile(path.join(PATH_TO_SITE, 'build', 'index.html'));
+// });
 
-const siteServer = http.createServer(siteApp);
-siteServer.listen(SITE_SERVER_PORT, () => {
-  console.log(`web server listening on *:${SITE_SERVER_PORT}`)
-});
+// const siteServer = http.createServer(siteApp);
+// siteServer.listen(SITE_SERVER_PORT, () => {
+//   console.log(`web server listening on *:${SITE_SERVER_PORT}`)
+// });
+
+// // ------------------------------------------------------------------------------------
+
+// const backendApp = express();
+
+// const backendServer = http.createServer(backendApp);
+// backendServer.listen(BACKEND_SERVER_PORT, () => {
+//   console.log(`backend server listening on *:${BACKEND_SERVER_PORT}`);
+// });
+
+// // ------------------------------------------------------------------------------------
+
+// const io = socketIO(backendServer, {
+//   cors: true
+// });
 
 // ------------------------------------------------------------------------------------
+// // Serving on single port
 
-const backendApp = express();
+// const app = express();
+// app.use(cors());
+// app.use(express.static(path.join(PATH_TO_SITE, 'build')));
 
-const backendServer = http.createServer(backendApp);
-backendServer.listen(BACKEND_SERVER_PORT, () => {
-  console.log(`backend server listening on *:${BACKEND_SERVER_PORT}`);
-});
+// app.get('/', (req, res) => {
+//   res.sendFile(path.join(PATH_TO_SITE, 'build', 'index.html'));
+// });
+
+// const server = http.createServer(app);
+// server.listen(SINGLE_SERVER_PORT, () => {
+//   console.log(`server listening on *:${SINGLE_SERVER_PORT}`)
+// });
+
+// const io = socketIO(server, {
+//   cors: true
+// });
 
 // ------------------------------------------------------------------------------------
+// Serving only the backend
 
-const io = socketIO(backendServer, {
+const app = express();
+
+const server = http.createServer(app);
+server.listen(SINGLE_SERVER_PORT, () => {
+  console.log(`server listening on *:${SINGLE_SERVER_PORT}`)
+});
+
+const io = socketIO(server, {
   cors: true
 });
+
 
 // ------------------------------------------------------------------------------------
 

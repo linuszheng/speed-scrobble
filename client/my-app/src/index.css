@@ -66,6 +66,14 @@ div #playerBoardContainer {
     flex-direction: column;
 }
 
+div #defBoard {
+    height: 600px;
+    width: 200px;
+    background-color: beige;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
 /* ---------------------------------------------------------------------------------------- */
 
 
@@ -112,20 +120,31 @@ div .wordComponent {
 
 /* ---------------------------------------------------------------------------------------- */
 
-.curTurn {
-    font-weight: bold;
+.myBoard {
+    background-color: violet;
 }
 
-.gaveValidWord {
-    background-color: yellowgreen;
+.curTurn {
+    font-weight: bold;
 }
 
 .gaveInvalidWord {
     background-color: tomato;
 }
 
-.myBoard {
-    background-color: violet;
+.gaveValidWord {
+    background-color: yellowgreen;
 }
 
+
 /* ---------------------------------------------------------------------------------------- */
+
+#headword {
+    font-size: 24px;
+}
+
+#shortDefList {
+    padding-left: 20px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}

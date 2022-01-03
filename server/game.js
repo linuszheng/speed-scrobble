@@ -85,28 +85,30 @@ class Game {
         this.board = new boardModule.Board();
         let newPlayers = {};
         for(const id in this.players){
-            newPlayers[id] = new playerModule.Player(id);
+            newPlayers[id] = new playerModule.Player(id, ()=>{this.emitBoard()});
         }
         this.players = newPlayers;
         this.turnCounter.reset();
         this.emitBoard();
     }
 
-    handleSayWord(socket, data){
+    async handleSayWord(socket, data){
         const word = data.word;
         const player = this.players[socket.id];
+        await this.dict.loadWord(word);
         const valid = (word.length >= 3 && this.dict.isWord(word) && this.removeAndReturnTrueIfExists(word));
         if(valid) {
             player.addWord(word);
             this.turnCounter.setPlayerId(socket.id);
         }
         player.setWordStatus(valid);
+        const shortDef = this.dict.shortDef();
         this.emitBoard();
-
         this.emitters.emitAnnounceWord(this.roomName, {
             socketId: socket.id,
             word: word,
-            valid: valid
+            valid: valid,
+            shortDef: shortDef
         });
     }
 

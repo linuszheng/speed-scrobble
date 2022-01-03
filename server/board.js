@@ -51,8 +51,6 @@ class Board {
                 id++;
             }
         }
-
-        console.log(this.tilesAll);
     }
 
     flipTile(i) {

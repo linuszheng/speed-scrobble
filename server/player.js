@@ -1,3 +1,6 @@
+
+const WORD_STATUS_TIME = 2000;
+
 class Player {
 
     constructor(id, emitBoard){
@@ -23,7 +26,7 @@ class Player {
         this.wordStatusTimeout = setTimeout(()=>{
             this.wordStatus = 'none';
             this.emitBoard();
-        }, 3000);
+        }, WORD_STATUS_TIME);
     }
     
 }

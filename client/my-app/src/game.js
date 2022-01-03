@@ -87,7 +87,7 @@ class PlayerBoard extends React.Component {
         let className = 'playerBoard';
         let text = player.socketId;
         if (this.props.meStatus) {className += ' myBoard'; text += ' (YOU)'}
-        if (this.props.turnStatus) {className += ' curTurn'; text += ' <------------------'}
+        if (this.props.turnStatus) {className += ' curTurn'; text += ' <<--------------------'}
         if (player.wordStatus === 'valid') className += ' gaveValidWord';
         else if (player.wordStatus === 'invalid') className += ' gaveInvalidWord';
         return (
@@ -100,6 +100,18 @@ class PlayerBoard extends React.Component {
 
 }
 
+function DefBoard(props){
+    const defComponents = [];
+    for(const i in props.shortDef){
+        defComponents.push(<li key={i}>{props.shortDef[i]}</li>);
+    }
+    const headwordComponent = (<div id='headword'>{props.word}</div>);
+    return(<div id="defBoard">
+        {headwordComponent}
+        <ul id="shortDefList">{defComponents}</ul>
+    </div>);
+}
+
 class Game extends React.Component {
 
     constructor(props){
@@ -108,7 +120,9 @@ class Game extends React.Component {
         props.listeners.setAnnounceWordListener( (data)=>{this.handleAnnounceWord(data)} );
         this.state = {
             tiles: [],
-            players: {}
+            players: {},
+            word: '',
+            shortDef: '',
         }
     }
 
@@ -122,6 +136,12 @@ class Game extends React.Component {
 
     handleAnnounceWord(data){
         this.speakWord(data.word);
+        if(data.valid){
+            this.setState({
+                word: data.word,
+                shortDef: data.shortDef
+            });
+        }
     }
 
     handleTileClick(tileId){
@@ -160,6 +180,7 @@ class Game extends React.Component {
                     <div id="playerBoardContainer">
                         {playerBoardComponents}
                     </div>
+                    <DefBoard word={this.state.word} shortDef={this.state.shortDef}/>
                 </div>
                 <WordInput handleWordInputSubmit={ (word)=>{this.handleWordInputSubmit(word)} } />
                 <button id="restartButton" onClick={ ()=>{this.props.emitters.emitUserRestart()} }>Restart</button>
