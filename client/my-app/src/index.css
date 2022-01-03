@@ -8,11 +8,12 @@ div .tile {
     background-color: beige;
     text-align: center;
     vertical-align: middle;
+    border: 1px solid burlywood;    /* in sync with .wordComponent and .letter border */
 }
 
 div .letter {
     position: absolute;
-    border: 2px solid burlywood;    /* in sync with .wordComponent border */
+    border: 2px solid burlywood;    /* in sync with .wordComponent and .tile border */
 }
 
 /* ---------------------------------------------------------------------------------------- */
@@ -25,7 +26,7 @@ div .letter {
 }
 
 #idLabel {
-    font-size: 20px;
+    font-size: 24px;
 }
 
 /* ---------------------------------------------------------------------------------------- */
@@ -90,14 +91,14 @@ div .wordComponent {
     display: flex;
     flex-direction: row;
     margin: 5px;                           /* in sync with .playerBoard padding */
-    border: 2px solid burlywood;        /* in sync with .letter border */
+    border: 1px solid burlywood;        /* in sync with .letter and .tile border */
 }
 
 /* ---------------------------------------------------------------------------------------- */
 
 
 #wordInput {
-    font-size: 16px;
+    font-size: 20px;
 }
 
 #wordSubmitButton {

@@ -5,6 +5,7 @@ server/node_modules/*
 client/my-app/yarn.lock
 client/my-app/package-lock.json
 client/my-app/node_modules/*
+client/my-app/build/*
 
 */.DS_Store
 .DS_Store
