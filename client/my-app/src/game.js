@@ -88,6 +88,7 @@ class PlayerBoard extends React.Component {
         let text = player.socketId;
         if (this.props.meStatus) {className += ' myBoard'; text += ' (YOU)'}
         if (this.props.turnStatus) {className += ' curTurn'; text += ' <<--------------------'}
+        if (!player.connectionStatus) {className += ' disconnected'}
         if (player.wordStatus === 'valid') className += ' gaveValidWord';
         else if (player.wordStatus === 'invalid') className += ' gaveInvalidWord';
         return (

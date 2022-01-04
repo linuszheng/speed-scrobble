@@ -21,8 +21,8 @@ const MSG_GAME_ANNOUNCE_WORD = "game:announce-word";
 // ------------------------------------------------------------------------------------
 
 
-const socketRef = socketIOClient(SOCKET_SERVER_URL);      // this is for local testing (access to local host)
-// const socketRef = socketIOClient();                         // if no url specified, then automatically tries to connect to the server hosting it
+// const socketRef = socketIOClient(SOCKET_SERVER_URL);      // this is for local testing (access to local host)
+const socketRef = socketIOClient();                         // if no url specified, then automatically tries to connect to the server hosting it
 let id;                                                     // used for ngrok which gives random urls
 
 socketRef.on('connect', () => {

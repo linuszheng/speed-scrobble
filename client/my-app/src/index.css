@@ -136,6 +136,10 @@ div .wordComponent {
     background-color: yellowgreen;
 }
 
+.disconnected {
+    background-color: grey;
+}
+
 
 /* ---------------------------------------------------------------------------------------- */
 

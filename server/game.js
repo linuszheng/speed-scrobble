@@ -28,6 +28,19 @@ class TurnCounter {
         }
     }
 
+    removePlayerId(id){
+        let indexRemoved;
+        for(const i in this.playerIds){
+            const match = (this.playerIds[i] == id);
+            if (match) {
+                this.playerIds.splice(i, 1);
+                indexRemoved = i;
+            }
+        }
+        if(indexRemoved < this.curTurn) {this.curTurn--}
+        if(this.curTurn === this.playerIds.length) {this.reset()}
+    }
+
     getCurPlayerId(){
         return this.playerIds[this.curTurn];
     }
@@ -51,7 +64,7 @@ class Game {
                 socketId: player.socketId,
                 words: player.words,
                 wordStatus: player.wordStatus,
-                turnStatus: player.turnStatus
+                connectionStatus: player.connectionStatus
             }
         }
         this.emitters.emitBoard(this.roomName, {
@@ -69,7 +82,10 @@ class Game {
     }
 
     handleDisconnect(socket){
+        this.turnCounter.removePlayerId(socket.id);
+        this.players[socket.id].connectionStatus = false;
         socket.leave(this.roomName);
+        this.emitBoard();
     }
 
     handleFlip(socket, data){
@@ -85,7 +101,7 @@ class Game {
         this.board = new boardModule.Board();
         let newPlayers = {};
         for(const id in this.players){
-            newPlayers[id] = new playerModule.Player(id, ()=>{this.emitBoard()});
+            if(this.players[id].connectionStatus) newPlayers[id] = new playerModule.Player(id, ()=>{this.emitBoard()});
         }
         this.players = newPlayers;
         this.turnCounter.reset();

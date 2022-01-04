@@ -9,6 +9,7 @@ class Player {
         this.words = [];
         this.wordStatus = 'none';
         this.wordStatusTimeout = undefined;
+        this.connectionStatus = true;
     }
 
     addWord(w){

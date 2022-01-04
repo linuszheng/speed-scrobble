@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const http = require("http");
-const https = require('https');
 const path = require('path');
 const socketIO = require("socket.io");
 const gameModule = require('./game');
@@ -58,27 +57,13 @@ const MSG_GAME_ANNOUNCE_WORD = "game:announce-word";
 // ------------------------------------------------------------------------------------
 // // Serving on single port
 
-// const app = express();
-// app.use(cors());
-// app.use(express.static(path.join(PATH_TO_SITE, 'build')));
-
-// app.get('/', (req, res) => {
-//   res.sendFile(path.join(PATH_TO_SITE, 'build', 'index.html'));
-// });
-
-// const server = http.createServer(app);
-// server.listen(SINGLE_SERVER_PORT, () => {
-//   console.log(`server listening on *:${SINGLE_SERVER_PORT}`)
-// });
-
-// const io = socketIO(server, {
-//   cors: true
-// });
-
-// ------------------------------------------------------------------------------------
-// Serving only the backend
-
 const app = express();
+app.use(cors());
+app.use(express.static(path.join(PATH_TO_SITE, 'build')));
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(PATH_TO_SITE, 'build', 'index.html'));
+});
 
 const server = http.createServer(app);
 server.listen(SINGLE_SERVER_PORT, () => {
@@ -88,6 +73,20 @@ server.listen(SINGLE_SERVER_PORT, () => {
 const io = socketIO(server, {
   cors: true
 });
+
+// ------------------------------------------------------------------------------------
+// Serving only the backend
+
+// const app = express();
+
+// const server = http.createServer(app);
+// server.listen(SINGLE_SERVER_PORT, () => {
+//   console.log(`server listening on *:${SINGLE_SERVER_PORT}`)
+// });
+
+// const io = socketIO(server, {
+//   cors: true
+// });
 
 
 // ------------------------------------------------------------------------------------
