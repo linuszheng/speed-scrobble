@@ -67,7 +67,10 @@ class Game {
         this.emitters = emitters;
         this.dict = new dictModule.Dictionary();
         this.board = new boardModule.Board();
-        this.turnCounter = new TurnCounter(()=>{this.flipRandom()}, ()=>{this.emitters.emitRestartTimer(this.roomName, {startTime: TURN_TIME})});
+        this.turnCounter = new TurnCounter(
+            ()=>{this.flipRandom()},
+            ()=>{this.emitters.emitRestartTimer(this.roomName, {startTime: TURN_TIME})
+        });
         this.turnCounter.restartTimer();
         this.players = {};
     }
