@@ -6,6 +6,7 @@ import Game from './game';
 
 // ------------------------------------------------------------------------------------
 
+// npm start runs it on localhost:3000
 const BACKEND_SERVER_PORT = 3030;
 const SOCKET_SERVER_URL = "http://localhost:"+BACKEND_SERVER_PORT;
 
@@ -17,12 +18,13 @@ const MSG_USER_RESTART = "user:restart";
 
 const MSG_GAME_BOARD = "game:board";
 const MSG_GAME_ANNOUNCE_WORD = "game:announce-word";
+const MSG_GAME_RESTART_TIMER = "game:restart-timer";
 
 // ------------------------------------------------------------------------------------
 
 
-// const socketRef = socketIOClient(SOCKET_SERVER_URL);      // this is for local testing (access to local host)
-const socketRef = socketIOClient();                         // if no url specified, then automatically tries to connect to the server hosting it
+const socketRef = socketIOClient(SOCKET_SERVER_URL);      // this is for local testing (access to local host)
+// const socketRef = socketIOClient();                         // if no url specified, then automatically tries to connect to the server hosting it
 let id;                                                     // used for ngrok which gives random urls
 
 socketRef.on('connect', () => {
@@ -65,11 +67,23 @@ const listeners = {
       console.log(data);
       handleAnnounceWord(data);
     });
-  }
+  },
+  setRestartTimerListener: (handleRestartTimer) => {
+    socketRef.on(MSG_GAME_RESTART_TIMER, (data) => {
+      console.log('received restart timer');
+      console.log(data);
+      handleRestartTimer(data);
+    });
+  },
 }
 
 // ------------------------------------------------------------------------------------
 
+
+socketRef.on(MSG_GAME_RESTART_TIMER, (data) => {
+  console.log('received restart timer');
+  console.log(data);
+});
 
 function startGame(){
   ReactDOM.render(<Game id={id} emitters={emitters} listeners={listeners}/>, document.getElementById('root'));

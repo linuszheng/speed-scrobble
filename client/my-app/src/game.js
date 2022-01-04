@@ -121,11 +121,13 @@ class Game extends React.Component {
         super(props);
         props.listeners.setBoardListener( (data)=>{this.handleBoard(data)} );
         props.listeners.setAnnounceWordListener( (data)=>{this.handleAnnounceWord(data)} );
+        props.listeners.setRestartTimerListener( (data)=>{this.handleRestartTimer(data)} );
         this.state = {
             tiles: [],
             players: {},
             word: '',
             shortDef: '',
+            turnTime: 0,
         }
     }
 
@@ -145,6 +147,21 @@ class Game extends React.Component {
                 shortDef: data.shortDef
             });
         }
+    }
+
+    handleRestartTimer(data){           // this could've been on either client or server but since it's not key to the game (the server has its own timer), i just put it here to lighten the server load
+        this.setState({
+            turnTime: data.startTime / 1000
+        });
+        if(typeof this.turnTimerInterval !== 'undefined') clearTimeout(this.turnTimerInterval);
+        this.turnTimerInterval = setInterval(()=>{
+            const prevTurnTime = this.state.turnTime;
+            if(prevTurnTime > 0){
+                this.setState({
+                    turnTime: prevTurnTime-1
+                });
+            }
+        }, 1000);
     }
 
     handleTileClick(tileId){
@@ -177,6 +194,7 @@ class Game extends React.Component {
             <div id="container" onClick={ () => { document.getElementById('wordInput').focus(); } }>
                 <div id="titleBar">
                     <div id="idLabel">{this.props.id}</div>
+                    <div id="turnTime">{this.state.turnTime}</div>
                 </div>
                 <div id="allBoardContainer">
                     <Board tiles={this.state.tiles} handleTileClick={ (tileId)=>{this.handleTileClick(tileId)} }/>

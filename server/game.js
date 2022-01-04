@@ -5,10 +5,11 @@ const boardModule = require('./board');
 const TURN_TIME = 10000;
 
 class TurnCounter {
-    constructor(forceFlip){
+    constructor(forceFlip, emitRestartTimer){
         this.curTurn = 0;
         this.playerIds = [];
         this.forceFlip = forceFlip;
+        this.emitRestartTimer = emitRestartTimer;
     }
 
     reset(){
@@ -21,6 +22,7 @@ class TurnCounter {
         this.forceFlipTimeout = setTimeout(()=>{
             this.forceFlip();
         }, TURN_TIME);
+        this.emitRestartTimer();
     }
 
     addPlayerId(id){
@@ -65,7 +67,7 @@ class Game {
         this.emitters = emitters;
         this.dict = new dictModule.Dictionary();
         this.board = new boardModule.Board();
-        this.turnCounter = new TurnCounter(()=>{this.flipRandom()});
+        this.turnCounter = new TurnCounter(()=>{this.flipRandom()}, ()=>{this.emitters.emitRestartTimer(this.roomName, {startTime: TURN_TIME})});
         this.turnCounter.restartTimer();
         this.players = {};
     }
