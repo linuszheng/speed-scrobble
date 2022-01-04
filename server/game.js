@@ -2,14 +2,25 @@ const playerModule = require('./player');
 const dictModule = require('./dict');
 const boardModule = require('./board');
 
+const TURN_TIME = 10000;
+
 class TurnCounter {
-    constructor(){
+    constructor(forceFlip){
         this.curTurn = 0;
         this.playerIds = [];
+        this.forceFlip = forceFlip;
     }
 
     reset(){
         this.curTurn = 0;
+        this.restartTimer();
+    }
+
+    restartTimer(){
+        if(typeof this.forceFlipTimeout !== 'undefined') clearTimeout(this.forceFlipTimeout);
+        this.forceFlipTimeout = setTimeout(()=>{
+            this.forceFlip();
+        }, TURN_TIME);
     }
 
     addPlayerId(id){
@@ -19,6 +30,7 @@ class TurnCounter {
     increment(){
         this.curTurn++;
         if(this.curTurn == this.playerIds.length) this.curTurn = 0;
+        this.restartTimer();
     }
 
     setPlayerId(id){
@@ -26,6 +38,7 @@ class TurnCounter {
             const isTurn = (this.playerIds[i] == id);
             if (isTurn) this.curTurn = i;
         }
+        this.restartTimer();
     }
 
     removePlayerId(id){
@@ -52,7 +65,8 @@ class Game {
         this.emitters = emitters;
         this.dict = new dictModule.Dictionary();
         this.board = new boardModule.Board();
-        this.turnCounter = new TurnCounter();
+        this.turnCounter = new TurnCounter(()=>{this.flipRandom()});
+        this.turnCounter.restartTimer();
         this.players = {};
     }
 
@@ -91,9 +105,7 @@ class Game {
     handleFlip(socket, data){
         const index = data.index;
         if(socket.id == this.turnCounter.getCurPlayerId() && this.board.tilesAll[index].hidden) {
-            this.board.flipTile(index);
-            this.turnCounter.increment();
-            this.emitBoard();
+            this.flip(index);
         }
     }
 
@@ -126,6 +138,18 @@ class Game {
             valid: valid,
             shortDef: shortDef
         });
+    }
+
+    flip(index){
+        this.board.flipTile(index);
+        this.turnCounter.increment();
+        this.emitBoard();
+    }
+
+    flipRandom(){
+        this.board.flipRandomTile();
+        this.turnCounter.increment();
+        this.emitBoard();
     }
 
     removeAndReturnTrueIfExists(x){

@@ -8,10 +8,12 @@ class Board extends React.Component {
             top: tileInfo.y+'px',
             left: tileInfo.x+'px'
         }
+        let className = "tile letter";
+        if(!tileInfo.hidden) className += " shown";
         return (
             <div 
                 key={tileInfo.id}
-                className="tile letter"
+                className={className}
                 style={style} 
                 onClick={ ()=>{this.props.handleTileClick(tileInfo.id);} }>
                 {tileInfo.hidden ? ' ' : tileInfo.content}

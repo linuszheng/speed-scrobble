@@ -135,3 +135,23 @@ const emitters = {
 const game = new gameModule.Game("fun-game-room", emitters);
 
 // ------------------------------------------------------------------------------------
+
+// programatically serve through localtunnel
+// tried ngrok (which is faster) and it does NOT work
+
+const localtunnel = require('localtunnel');
+(async () => {
+  const tunnel = await localtunnel({
+    port: 3030,
+    subdomain: 'speed-scrobble'
+  });
+  console.log('establishing localtunnel connection');
+  console.log(tunnel.url);
+
+  tunnel.on('close', () => {
+    // tunnels are closed
+  });
+})();
+
+
+// ------------------------------------------------------------------------------------

@@ -16,6 +16,11 @@ div .letter {
     border: 2px solid burlywood;    /* in sync with .wordComponent and .tile border */
 }
 
+div .shown {
+    z-index: 1;
+    background-color: rgb(100, 255, 108);
+}
+
 /* ---------------------------------------------------------------------------------------- */
 
 
@@ -51,7 +56,7 @@ div #allBoardContainer {
 div #letterBoard {
     height: 600px;
     width: 600px;
-    background-color: grey;
+    background-color: rgb(104, 104, 104);
     position: relative;
 }
 
@@ -64,6 +69,7 @@ div #playerBoardContainer {
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
 }
 
 div #defBoard {
@@ -137,7 +143,7 @@ div .wordComponent {
 }
 
 .disconnected {
-    background-color: grey;
+    background-color: rgb(170, 170, 170);
 }
 
 

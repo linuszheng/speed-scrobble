@@ -58,6 +58,16 @@ class Board {
         this.curShownLetters.push(this.tilesAll[i].content);
     }
 
+    flipRandomTile(){
+        let tilesRemainingHidden = [];
+        for(const tile of this.tilesRemaining){
+            if(tile.hidden) tilesRemainingHidden.push(tile);
+        }
+        const i = Math.floor(Math.random()*tilesRemainingHidden.length);
+        tilesRemainingHidden[i].hidden = false;
+        this.curShownLetters.push(tilesRemainingHidden[i].content);
+    }
+
 
     removeTile(letter){
         for(const i in this.tilesRemaining){
