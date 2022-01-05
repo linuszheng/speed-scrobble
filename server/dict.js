@@ -38,6 +38,30 @@ class Dictionary {
 }
 
 
+
+class OfflineDictionary {
+  constructor(){
+    this.curDef = [];
+  }
+
+  async loadWord(word){
+    return new Promise(resolve => {
+      resolve(true);
+    });
+  }
+
+  isWord(){
+    return true;
+  }
+
+  shortDef(){
+    return ['no connection'];
+  }
+
+}
+
+
 module.exports = {
-  Dictionary: Dictionary
+  Dictionary: Dictionary,
+  OfflineDictionary: OfflineDictionary
 }

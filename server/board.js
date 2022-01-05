@@ -63,16 +63,20 @@ class Board {
         for(const tile of this.tilesRemaining){
             if(tile.hidden) tilesRemainingHidden.push(tile);
         }
+        if(tilesRemainingHidden.length === 0) return false;
         const i = Math.floor(Math.random()*tilesRemainingHidden.length);
         tilesRemainingHidden[i].hidden = false;
         this.curShownLetters.push(tilesRemainingHidden[i].content);
+        return true;
     }
 
 
     removeTile(letter){
+        let tileRemoved;
         for(const i in this.tilesRemaining){
             const tile = this.tilesRemaining[i];
             if(tile.content == letter && !tile.hidden){
+                tileRemoved = this.tilesRemaining[i];
                 this.tilesRemaining.splice(i, 1);
                 break;
             }
@@ -83,6 +87,12 @@ class Board {
                 break;
             }
         }
+        return tileRemoved;
+    }
+
+    restoreTile(tile){
+        this.tilesRemaining.push(tile);
+        this.curShownLetters.push(tile.content);
     }
     
 }

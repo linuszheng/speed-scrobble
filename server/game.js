@@ -12,15 +12,10 @@ class TurnCounter {
         this.emitRestartTimer = emitRestartTimer;
     }
 
-    reset(){
-        this.curTurn = 0;
-        this.restartTimer();
-    }
-
     restartTimer(){
         if(typeof this.forceFlipTimeout !== 'undefined') clearTimeout(this.forceFlipTimeout);
         this.forceFlipTimeout = setTimeout(()=>{
-            this.forceFlip();
+            if(this.playerIds.length > 0) this.forceFlip();
         }, TURN_TIME);
         this.emitRestartTimer();
     }
@@ -31,7 +26,7 @@ class TurnCounter {
 
     increment(){
         this.curTurn++;
-        if(this.curTurn == this.playerIds.length) this.curTurn = 0;
+        if(this.curTurn >= this.playerIds.length) this.curTurn = 0;
         this.restartTimer();
     }
 
@@ -53,11 +48,19 @@ class TurnCounter {
             }
         }
         if(indexRemoved < this.curTurn) {this.curTurn--}
-        if(this.curTurn === this.playerIds.length) {this.reset()}
+        if(this.curTurn === this.playerIds.length) {this.curTurn = 0}
     }
 
     getCurPlayerId(){
         return this.playerIds[this.curTurn];
+    }
+}
+
+class Move {
+    constructor(boardTiles, id, word){
+        this.boardTiles = boardTiles;
+        this.id = id;
+        this.word = word;
     }
 }
 
@@ -71,7 +74,6 @@ class Game {
             ()=>{this.flipRandom()},
             ()=>{this.emitters.emitRestartTimer(this.roomName, {startTime: TURN_TIME})
         });
-        this.turnCounter.restartTimer();
         this.players = {};
     }
 
@@ -83,6 +85,7 @@ class Game {
                 socketId: player.socketId,
                 words: player.words,
                 wordStatus: player.wordStatus,
+                challengeStatus: player.challengeStatus,
                 connectionStatus: player.connectionStatus
             }
         }
@@ -121,18 +124,39 @@ class Game {
             if(this.players[id].connectionStatus) newPlayers[id] = new playerModule.Player(id, ()=>{this.emitBoard()});
         }
         this.players = newPlayers;
-        this.turnCounter.reset();
+        this.turnCounter.curTurn = 0;
+        this.clearChallengeStatuses('none');
         this.emitBoard();
     }
 
+    handleChallenge(socket, data){
+        const player = this.players[socket.id];
+        if(player.challengeStatus === 'canChallenge') {
+            player.challengeStatus = 'challenged';
+            this.emitBoard();
+        }
+        else if(player.challengeStatus === 'canDiscard') {
+            this.discardLastMove(player);
+            this.clearChallengeStatuses('discarded');
+            this.emitBoard();
+        }
+    }
+
     async handleSayWord(socket, data){
-        const word = data.word;
+        const word = data.word.toLowerCase();
         const player = this.players[socket.id];
         await this.dict.loadWord(word);
-        const valid = (word.length >= 3 && this.dict.isWord(word) && this.removeAndReturnTrueIfExists(word));
-        if(valid) {
-            player.addWord(word);
-            this.turnCounter.setPlayerId(socket.id);
+        let valid = (word.length >= 3 && this.dict.isWord(word));
+        if(valid){
+            const res = this.removeAndReturnMoveIfExists(word);
+            if(res === false){
+                valid = false;
+            } else {
+                this.prevMove = res;
+                player.addWord(word);
+                this.turnCounter.setPlayerId(socket.id);
+                this.setChallengeStatuses(socket.id);
+            }
         }
         player.setWordStatus(valid);
         const shortDef = this.dict.shortDef();
@@ -145,6 +169,28 @@ class Game {
         });
     }
 
+    discardLastMove(player){
+        player.words.pop();     // warning: depends on order of players words in list
+        for(const tile of this.prevMove.boardTiles){
+            this.board.restoreTile(tile);
+        }
+        if(this.prevMove.id !== '') this.players[this.prevMove.id].addWord(this.prevMove.word);
+        this.prevMove = null;
+    }
+
+    clearChallengeStatuses(newStatus){
+        for(const id in this.players){
+            this.players[id].challengeStatus = newStatus;
+        }
+    }
+
+    setChallengeStatuses(targetId){
+        for(const id in this.players){
+            if(id === targetId) this.players[id].challengeStatus = 'canDiscard';
+            else this.players[id].challengeStatus = 'canChallenge';
+        }
+    }
+
     flip(index){
         this.board.flipTile(index);
         this.turnCounter.increment();
@@ -152,44 +198,50 @@ class Game {
     }
 
     flipRandom(){
-        this.board.flipRandomTile();
-        this.turnCounter.increment();
-        this.emitBoard();
+        const didFlip = this.board.flipRandomTile();
+        if(didFlip) {
+            this.turnCounter.increment();
+            this.emitBoard();
+        }
     }
 
-    removeAndReturnTrueIfExists(x){
-        if(this.worksWithBoard(x)) return true;
+    removeAndReturnMoveIfExists(x){
+        const res = this.worksWithBoard(x);
+        if(res !== false) return new Move(res, '', '');
         for(const [id, player] of Object.entries(this.players)){
             for(const i in player.words){
                 const w = player.words[i];
-                if(this.worksWithPlayerWord(x, w)){
+                const res = this.removeIfWorksWithPlayerWord(x, w);
+                if(res !== false){
                     player.words.splice(i, 1);
-                    return true;
+                    return new Move(res, player.socketId, w);
                 }
             }
         }
         return false;
     }
 
-    worksWithPlayerWord(x, w){
+    removeIfWorksWithPlayerWord(x, w){
         console.log(w);
         const dif1 = this.difIfSupersetElseFalse(Array.from(x), Array.from(w));
         if(dif1 === false || dif1.length == 0) return false;
         const dif2 = this.difIfSupersetElseFalse(this.board.curShownLetters, dif1);
         if(dif2 === false) return false;
+        let tiles = [];
         for(const letter of dif1){
-            this.board.removeTile(letter);
+            tiles.push(this.board.removeTile(letter));
         }
-        return true;
+        return tiles;
     }
 
     worksWithBoard(x){
         let dif = this.difIfSupersetElseFalse(this.board.curShownLetters, Array.from(x));
         if(dif === false) return false;
+        let tiles = [];
         for(const letter of Array.from(x)){
-            this.board.removeTile(letter);
+            tiles.push(this.board.removeTile(letter));
         }
-        return true;
+        return tiles;
     }
 
     difIfSupersetElseFalse(a, b){

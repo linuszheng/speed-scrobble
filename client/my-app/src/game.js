@@ -104,14 +104,37 @@ class PlayerBoard extends React.Component {
 }
 
 function DefBoard(props){
+    if(props.word === '') return (<div id="defBoard"></div>);
     const defComponents = [];
     for(const i in props.shortDef){
         defComponents.push(<li key={i}>{props.shortDef[i]}</li>);
     }
-    const headwordComponent = (<div id='headword'>{props.word}</div>);
+    let playersChallenging = [];
+    let actionButton;
+    for(const i in props.players){
+        const player = props.players[i];
+        if(player.challengeStatus === 'challenged') playersChallenging.push(i);
+    }
+    const selfChallengeStatus = props.players[props.selfId].challengeStatus;
+    if(selfChallengeStatus === 'canChallenge'){
+        actionButton = (<div id='canChallenge' onClick={props.handleChallengeClicked}>Challenge</div>);
+    } else if(selfChallengeStatus === 'challenged'){
+        actionButton = (<div id='challenged'>Challenged</div>);
+    } else if(selfChallengeStatus === 'canDiscard'){
+        actionButton = (<div id='canDiscard' onClick={props.handleChallengeClicked}>Discard</div>);
+    } else if(selfChallengeStatus === 'discarded'){
+        actionButton = (<div id='discarded'>Discarded</div>);
+    }
+    let playersChallengingComponent = null;
+    if(playersChallenging.length > 0){
+        const playersChallengingText = 'Players challenging: ' + playersChallenging.join(', ');
+        playersChallengingComponent = (<p id='playersChallengingText'>{playersChallengingText}</p>);
+    }
     return(<div id="defBoard">
-        {headwordComponent}
+        <div id='headword'>{props.word}</div>
         <ul id="shortDefList">{defComponents}</ul>
+        {actionButton}
+        {playersChallengingComponent}
     </div>);
 }
 
@@ -160,6 +183,9 @@ class Game extends React.Component {
                 this.setState({
                     turnTime: prevTurnTime-1
                 });
+            } else {
+                clearTimeout(this.turnTimerInterval);
+                this.turnTimerInterval = undefined;
             }
         }, 1000);
     }
@@ -176,6 +202,10 @@ class Game extends React.Component {
         });
     }
 
+    handleChallengeClicked(){
+        this.props.emitters.emitChallenge({});
+    }
+
     speakWord(text){
         const synth = window.speechSynthesis;
         const utterance = new SpeechSynthesisUtterance(text);
@@ -184,11 +214,13 @@ class Game extends React.Component {
 
     render(){
         const playerBoardComponents = [];
+        let challengeStatuses = [];
         for(const i in this.state.players){
             const player = this.state.players[i];
             const turnStatus = (player.socketId === this.state.playerTurn);
             const meStatus = (player.socketId === this.props.id);
             playerBoardComponents.push(<PlayerBoard key={player.socketId} player={player} turnStatus={turnStatus} meStatus={meStatus}/>);
+            challengeStatuses.push(player.challengeStatus);
         }
         return (
             <div id="container" onClick={ () => { document.getElementById('wordInput').focus(); } }>
@@ -197,11 +229,20 @@ class Game extends React.Component {
                     <div id="turnTime">{this.state.turnTime}</div>
                 </div>
                 <div id="allBoardContainer">
-                    <Board tiles={this.state.tiles} handleTileClick={ (tileId)=>{this.handleTileClick(tileId)} }/>
+                    <Board
+                        tiles={this.state.tiles}
+                        handleTileClick={ (tileId)=>{this.handleTileClick(tileId)} }
+                    />
                     <div id="playerBoardContainer">
                         {playerBoardComponents}
                     </div>
-                    <DefBoard word={this.state.word} shortDef={this.state.shortDef}/>
+                    <DefBoard
+                        word={this.state.word}
+                        shortDef={this.state.shortDef}
+                        players={this.state.players}
+                        selfId={this.props.id}
+                        handleChallengeClicked={ ()=>{this.handleChallengeClicked()} }
+                    />
                 </div>
                 <WordInput handleWordInputSubmit={ (word)=>{this.handleWordInputSubmit(word)} } />
                 <button id="restartButton" onClick={ ()=>{this.props.emitters.emitUserRestart()} }>Restart</button>

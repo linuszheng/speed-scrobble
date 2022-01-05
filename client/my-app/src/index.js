@@ -14,6 +14,7 @@ const SOCKET_SERVER_URL = "http://localhost:"+BACKEND_SERVER_PORT;
 const MSG_USER_FLIP = "user:flip";
 const MSG_USER_SAY_WORD = "user:say-word";
 const MSG_USER_RESTART = "user:restart";
+const MSG_USER_CHALLENGE = "user:challenge";
 
 
 const MSG_GAME_BOARD = "game:board";
@@ -23,9 +24,9 @@ const MSG_GAME_RESTART_TIMER = "game:restart-timer";
 // ------------------------------------------------------------------------------------
 
 
-const socketRef = socketIOClient(SOCKET_SERVER_URL);      // this is for local testing (access to local host)
-// const socketRef = socketIOClient();                         // if no url specified, then automatically tries to connect to the server hosting it
-let id;                                                     // used for ngrok which gives random urls
+// const socketRef = socketIOClient(SOCKET_SERVER_URL);      // this is for local testing (access to local host)
+const socketRef = socketIOClient();                         // if no url specified, then automatically tries to connect to the server hosting it, required for ngrok which has random urls, convenient for other services when using single port
+let id;                                                     
 
 socketRef.on('connect', () => {
   id = socketRef.id;
@@ -50,6 +51,10 @@ const emitters = {
   emitUserRestart: (data) => {
     console.log('emitting restart');
     socketRef.emit(MSG_USER_RESTART, data);
+  },
+  emitChallenge: (data) => {
+    console.log('emitting challenge');
+    socketRef.emit(MSG_USER_CHALLENGE, data);
   }
 }
 

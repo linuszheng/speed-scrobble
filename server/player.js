@@ -10,6 +10,7 @@ class Player {
         this.wordStatus = 'none';
         this.wordStatusTimeout = undefined;
         this.connectionStatus = true;
+        this.challengeStatus = 'none';
     }
 
     addWord(w){
