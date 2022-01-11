@@ -1,10 +1,37 @@
 class Tile {
-    constructor(id, content){
+    // constructor(id, content){
+    //     this.id = id;
+    //     this.content = content;
+    //     this.x = Math.random()*570;
+    //     this.y = Math.random()*570;
+    //     this.hidden = true;
+    // }
+
+    constructor(id, content, x, y){
         this.id = id;
         this.content = content;
-        this.x = Math.random()*570;
-        this.y = Math.random()*570;
+        this.x = x;
+        this.y = y;
         this.hidden = true;
+    }
+}
+
+class PosGenerator {
+    constructor(){
+        this.pos = [];
+
+        for(let i=0; i<600; i+=30){
+            for(let j=0; j<600; j+=30){
+                this.pos.push([i, j]);
+            }
+        }
+    }
+
+    getPos(){
+        const index = Math.floor(Math.random()*this.pos.length);
+        const res = this.pos[index];
+        this.pos.splice(index, 1);
+        return res;
     }
 }
 
@@ -42,10 +69,13 @@ class Board {
         this.tilesRemaining = [];
         this.curShownLetters = [];
 
+        const posGenerator = new PosGenerator();
+
         let id=0;
         for(const [letter, n] of Object.entries(freq)){
             for(let i=0; i<n; i++){
-                const tile = new Tile(id, letter);
+                const pos = posGenerator.getPos();
+                const tile = new Tile(id, letter, pos[0], pos[1]);
                 this.tilesAll.push(tile);
                 this.tilesRemaining.push(tile);
                 id++;

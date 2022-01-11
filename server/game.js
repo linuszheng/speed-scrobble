@@ -2,7 +2,7 @@ const playerModule = require('./player');
 const dictModule = require('./dict');
 const boardModule = require('./board');
 
-const TURN_TIME = 10000;
+const TURN_TIME = 60000;
 
 class TurnCounter {
     constructor(forceFlip, emitRestartTimer){

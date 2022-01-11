@@ -5,11 +5,15 @@ class Board extends React.Component {
 
     renderTile(tileInfo){
         const style = {
-            top: tileInfo.y+'px',
-            left: tileInfo.x+'px'
+            top: (tileInfo.y)+'px',
+            left: (tileInfo.x)+'px'
         }
         let className = "tile letter";
-        if(!tileInfo.hidden) className += " shown";
+        if(!tileInfo.hidden) {
+            className += " shown";
+            const h = (tileInfo.y + tileInfo.x)/570/2*240;
+            style.backgroundColor = 'hsl('+h.toString()+',100%,80%)';
+        }
         return (
             <div 
                 key={tileInfo.id}

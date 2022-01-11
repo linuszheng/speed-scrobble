@@ -2,9 +2,9 @@
 
 
 div .tile {
-    width: 30px;
-    height: 30px;
-    line-height: 30px;
+    width: 28px;                    /* in sync with border */
+    height: 28px;                   /* in sync with border */
+    line-height: 28px;              /* in sync with border */
     background-color: beige;
     text-align: center;
     vertical-align: middle;
@@ -58,30 +58,38 @@ div #allBoardContainer {
 }
 
 div #letterBoard {
-    height: 600px;
-    width: 600px;
+    height: 602px;                          /* in sync with .letter border */
+    width: 602px;                          /* in sync with .letter border */
     background-color: rgb(104, 104, 104);
     position: relative;
+    flex-grow: 0;
+    flex-shrink: 0;
 }
 
 div #playerBoardContainer {
-    height: 600px;
+    height: 602px;                          /* in sync with .letter border */
     width: 600px;
     border-color: sandybrown;
     border-style: solid;
-    border-width: 2px;                      /* top right left bottom, in sync with .playerBoard border-width */
+    border-width: 2px;                      /* top right bottom left, in sync with .playerBoard border-width */
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+    flex-shrink: 1;
 }
 
 div #defBoard {
-    height: 600px;
+    height: 602px;                          /* in sync with .letter border */
     width: 300px;
     background-color: beige;
     padding: 10px;
     box-sizing: border-box;
+    border-color: sandybrown;
+    border-style: solid;
+    border-width: 4px 4px 4px 0px;          /* in sync with .playerBoard border-width */
+    flex-grow: 1;
+    flex-shrink: 1;
 }
 
 /* ---------------------------------------------------------------------------------------- */
@@ -91,7 +99,7 @@ div #defBoard {
     background-color: gold;
     border-color: sandybrown;
     border-style: solid;
-    border-width: 2px;                      /* top right left bottom, in sync with #playerBoardContainer border-width */
+    border-width: 2px;                      /* top right bottom left, in sync with #playerBoardContainer border-width */
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -125,6 +133,7 @@ div .wordComponent {
 
 #restartButton {
     background-color: tomato;
+    margin-top: auto;               /* pushes it down to the bottom */
 }
 
 
